@@ -1,0 +1,54 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-15T10:00:00Z",
+  "rules": [
+    {
+      "resource": "product",
+      "operation": "delete",
+      "requiredLevel": "manager",
+      "timeoutMinutes": 30,
+      "autoApprove": false,
+      "description": "Exclusão de produtos requer aprovação gerencial"
+    },
+    {
+      "resource": "product",
+      "operation": "update",
+      "requiredLevel": "supervisor",
+      "timeoutMinutes": 15,
+      "autoApprove": false,
+      "description": "Alteração de produtos requer supervisão"
+    },
+    {
+      "resource": "user", 
+      "operation": "delete",
+      "requiredLevel": "admin",
+      "timeoutMinutes": 60,
+      "autoApprove": false,
+      "description": "Exclusão de usuários requer aprovação administrativa"
+    },
+    {
+      "resource": "order",
+      "operation": "cancel",
+      "requiredLevel": "supervisor",
+      "timeoutMinutes": 15,
+      "autoApprove": false,
+      "description": "Cancelamento de pedidos requer supervisão"
+    },
+    {
+      "resource": "payment",
+      "operation": "refund", 
+      "requiredLevel": "manager",
+      "timeoutMinutes": 45,
+      "autoApprove": false,
+      "description": "Estornos requerem aprovação gerencial"
+    },
+    {
+      "resource": "inventory",
+      "operation": "adjust",
+      "requiredLevel": "supervisor",
+      "timeoutMinutes": 20,
+      "autoApprove": false,
+      "description": "Ajustes de estoque requerem supervisão"
+    }
+  ]
+}

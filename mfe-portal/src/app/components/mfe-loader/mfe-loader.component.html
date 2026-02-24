@@ -1,0 +1,43 @@
+<div class="mfe-loader-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando {{ mfeConfig?.displayName || mfeName }}...</p>
+    <small *ngIf="mfeConfig?.version">Versão: {{ mfeConfig?.version }}</small>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h3>Erro ao carregar MFE</h3>
+    <p>{{ errorMessage }}</p>
+    <div class="error-actions">
+      <button class="retry-button" (click)="retry()">Tentar Novamente</button>
+      <button class="reload-config-button" (click)="reloadConfig()">Recarregar Configuração</button>
+    </div>
+    <details class="error-details">
+      <summary>Detalhes Técnicos</summary>
+      <div *ngIf="mfeConfig" class="config-info">
+        <p><strong>Nome:</strong> {{ mfeConfig.name }}</p>
+        <p><strong>URL:</strong> {{ mfeConfig.url }}</p>
+        <p><strong>Versão:</strong> {{ mfeConfig.version }}</p>
+        <p><strong>Status:</strong> {{ mfeConfig.status }}</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- MFE Container -->
+  <div #mfeContainer class="mfe-container" [class.hidden]="isLoading || hasError">
+    <!-- Componente será injetado dinamicamente aqui -->
+  </div>
+
+  <!-- Debug Info (apenas em desenvolvimento) -->
+  <div *ngIf="!isLoading && !hasError && mfeConfig" class="debug-info" 
+       [style.display]="'none'">
+    <small>
+      MFE: {{ mfeConfig.name }} | 
+      Versão: {{ mfeConfig.version }} | 
+      Team: {{ mfeConfig.metadata?.team }}
+    </small>
+  </div>
+</div>

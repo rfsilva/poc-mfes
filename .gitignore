@@ -26,3 +26,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/mfe-alcada/dist/
+/mfe-alcada/node_modules/
+/mfe-login/dist/
+/mfe-login/node_modules/
+/mfe-menu/dist/
+/mfe-menu/node_modules/
+/mfe-portal/dist/
+/mfe-portal/node_modules/
+/mfe-produto/dist/
+/mfe-produto/node_modules/

@@ -1,0 +1,91 @@
+<div class="menu-container">
+  <div class="menu-header">
+    <h3>Menu Principal</h3>
+    <div *ngIf="currentUser" class="user-info">
+      <span class="user-name">{{ currentUser.name }}</span>
+      <span class="user-role">{{ getUserRole() }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando menu...</p>
+  </div>
+
+  <nav *ngIf="!isLoading" class="menu-nav">
+    <ul class="menu-list">
+      <li 
+        *ngFor="let item of menuItems" 
+        class="menu-item"
+        [class.active]="isItemActive(item.id)"
+        [class.disabled]="!hasPermission(item) || !hasScope(item)">
+        
+        <button 
+          class="menu-button"
+          [disabled]="!hasPermission(item) || !hasScope(item)"
+          (click)="onMenuItemClick(item)"
+          [attr.aria-label]="item.description || item.label">
+          
+          <div class="menu-icon">{{ item.icon }}</div>
+          
+          <div class="menu-content">
+            <span class="menu-label">{{ item.label }}</span>
+            <span *ngIf="item.description" class="menu-description">
+              {{ item.description }}
+            </span>
+          </div>
+          
+          <div class="menu-arrow" *ngIf="hasPermission(item) && hasScope(item)">
+            →
+          </div>
+        </button>
+
+        <!-- Indicador de item fake -->
+        <div *ngIf="item.action === 'fake' && isItemActive(item.id)" class="fake-indicator">
+          <span>Em desenvolvimento</span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div *ngIf="!isLoading && menuItems.length === 0" class="empty-menu">
+    <div class="empty-icon">📋</div>
+    <h4>Nenhum item disponível</h4>
+    <p>Você não possui permissões para acessar nenhum item do menu.</p>
+  </div>
+
+  <!-- Informações de debug (apenas para desenvolvimento) -->
+  <div *ngIf="currentUser" class="debug-info">
+    <details>
+      <summary>🔍 Debug - Informações do Menu</summary>
+      <div class="debug-content">
+        <h5>Usuário:</h5>
+        <p><strong>Nome:</strong> {{ currentUser.name }}</p>
+        <p><strong>Username:</strong> {{ currentUser.username }}</p>
+        
+        <h5>Permissões:</h5>
+        <div class="tags">
+          <span *ngFor="let permission of currentUser.permissions" class="tag permission-tag">
+            {{ permission }}
+          </span>
+        </div>
+        
+        <h5>Scopes:</h5>
+        <div class="tags">
+          <span *ngFor="let scope of currentUser.scopes" class="tag scope-tag">
+            {{ scope }}
+          </span>
+        </div>
+        
+        <h5>Itens do Menu ({{ menuItems.length }}):</h5>
+        <div *ngFor="let item of menuItems" class="menu-debug-item">
+          <strong>{{ item.label }}</strong>
+          <br>
+          <small>Scopes necessários: {{ item.scopes?.join(', ') || 'Nenhum' }}</small>
+          <br>
+          <small>Permissões necessárias: {{ item.permissions.join(', ') || 'Nenhuma' }}</small>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>

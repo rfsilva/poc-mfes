@@ -1,0 +1,90 @@
+<div class="portal-container">
+  <header class="portal-header">
+    <div class="header-content">
+      <h1 class="portal-title">Portal MFE</h1>
+      <div class="user-info" *ngIf="currentUser">
+        <span>Bem-vindo, {{ currentUser.name }}</span>
+        
+        <!-- Status do Token -->
+        <div *ngIf="tokenStatus" class="token-status" 
+             [class.token-warning]="tokenStatus.needsRefresh"
+             [class.token-error]="!tokenStatus.isValid">
+          <span class="token-icon">🔐</span>
+          <span class="token-text">
+            {{ getTokenStatusText() }}
+          </span>
+        </div>
+        
+        <button class="logout-button" (click)="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="portal-main">
+    <!-- Tela de Login -->
+    <div *ngIf="!isAuthenticated" class="login-section">
+      <div class="login-container">
+        <h2>Acesso ao Portal</h2>
+        <app-mfe-loader 
+          mfeName="mfe-login"
+          [inputData]="loginInputData">
+        </app-mfe-loader>
+      </div>
+    </div>
+
+    <!-- Tela Principal com Menu -->
+    <div *ngIf="isAuthenticated" class="main-section">
+      <aside class="sidebar">
+        <app-mfe-loader 
+          mfeName="mfe-menu"
+          [inputData]="menuInputData">
+        </app-mfe-loader>
+      </aside>
+
+      <section class="content">
+        <div *ngIf="!selectedProduct" class="welcome-content">
+          <h2>Bem-vindo ao Portal</h2>
+          <p>Selecione uma opção no menu lateral para começar.</p>
+          
+          <!-- Informações do Token (Debug) -->
+          <div class="token-debug" *ngIf="tokenStatus">
+            <details>
+              <summary>🔍 Debug - Gerenciamento de Token</summary>
+              <div class="debug-content">
+                <h4>Status do Token:</h4>
+                <p><strong>Válido:</strong> {{ tokenStatus.isValid ? 'Sim' : 'Não' }}</p>
+                <p><strong>Expira em:</strong> {{ getTokenExpirationText() }}</p>
+                <p><strong>Precisa renovar:</strong> {{ tokenStatus.needsRefresh ? 'Sim' : 'Não' }}</p>
+                
+                <h4>Ações:</h4>
+                <button class="debug-button" (click)="forceTokenRefresh()">
+                  🔄 Forçar Refresh
+                </button>
+                
+                <h4>Debug Completo:</h4>
+                <pre>{{ getTokenDebugInfo() | json }}</pre>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div *ngIf="selectedProduct" class="product-content">
+          <app-mfe-loader 
+            mfeName="mfe-produto"
+            [inputData]="productInputData">
+          </app-mfe-loader>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="portal-footer">
+    <p>&copy; 2024 Portal MFE - Arquitetura de Referência</p>
+  </footer>
+
+  <!-- Container para MFE Alçada -->
+  <div id="validation-container" 
+       class="validation-overlay" 
+       [class.active]="showValidation">
+  </div>
+</div>

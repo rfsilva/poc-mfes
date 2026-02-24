@@ -1,0 +1,75 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-15T10:30:00Z",
+  "mfes": [
+    {
+      "name": "mfe-login",
+      "displayName": "Sistema de Login",
+      "url": "http://localhost:4201",
+      "remoteEntry": "/remoteEntry.json",
+      "exposedModule": "./Component",
+      "version": "1.2.0",
+      "status": "active",
+      "permissions": [],
+      "healthCheck": "/health",
+      "fallbackComponent": "DefaultLoginComponent",
+      "metadata": {
+        "description": "Módulo de autenticação",
+        "team": "Security Team",
+        "contact": "security@empresa.com"
+      }
+    },
+    {
+      "name": "mfe-menu",
+      "displayName": "Menu Principal",
+      "url": "http://localhost:4202",
+      "remoteEntry": "/remoteEntry.json",
+      "exposedModule": "./Component",
+      "version": "1.1.0",
+      "status": "active",
+      "permissions": ["read"],
+      "healthCheck": "/health",
+      "metadata": {
+        "description": "Sistema de navegação",
+        "team": "UI Team",
+        "contact": "ui@empresa.com"
+      }
+    },
+    {
+      "name": "mfe-produto",
+      "displayName": "Gestão de Produtos",
+      "url": "http://localhost:4203",
+      "remoteEntry": "/remoteEntry.json",
+      "exposedModule": "./Component",
+      "version": "2.0.0",
+      "status": "active",
+      "permissions": ["read", "write"],
+      "healthCheck": "/health",
+      "metadata": {
+        "description": "Módulo de gestão de produtos",
+        "team": "Product Team",
+        "contact": "products@empresa.com"
+      }
+    },
+    {
+      "name": "mfe-alcada",
+      "displayName": "Validação de Alçada",
+      "url": "http://localhost:4204",
+      "remoteEntry": "/remoteEntry.json",
+      "exposedModule": "./Component",
+      "version": "1.0.0",
+      "status": "active",
+      "permissions": ["validate"],
+      "healthCheck": "/health",
+      "fallbackComponent": "DefaultAlcadaComponent",
+      "metadata": {
+        "description": "Módulo de validação de operações críticas",
+        "team": "Security Team",
+        "contact": "security@empresa.com",
+        "type": "platform",
+        "internal": true,
+        "loadOnDemand": true
+      }
+    }
+  ]
+}

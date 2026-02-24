@@ -1,0 +1,267 @@
+<div class="product-dashboard-container">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h2>Dashboard de Produtos</h2>
+      <div *ngIf="currentUser" class="user-info">
+        <span>{{ currentUser.name }}</span>
+        <span class="user-role">{{ getUserRole() }}</span>
+        <span class="scope-info" *ngIf="hasScope('sc_produto')">✅ Autorizado</span>
+      </div>
+    </div>
+    
+    <div class="view-switcher">
+      <button 
+        class="view-button"
+        [class.active]="selectedView === 'dashboard'"
+        (click)="switchView('dashboard')">
+        📊 Dashboard
+      </button>
+      <button 
+        class="view-button"
+        [class.active]="selectedView === 'products'"
+        (click)="switchView('products')">
+        📦 Produtos
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Status Banner -->
+  <div class="loading-status-banner" [class]="getLoadingStatusClass()">
+    <div class="status-content">
+      <span class="status-icon">{{ getLoadingStatusIcon() }}</span>
+      <div class="status-text">
+        <strong>{{ getLoadingStatusTitle() }}</strong>
+        <span class="status-description">{{ getLoadingStatusDescription() }}</span>
+      </div>
+    </div>
+    <div class="status-timestamp">
+      <small>{{ getLoadingTimestamp() }}</small>
+    </div>
+  </div>
+
+  <!-- Auth Info Banner -->
+  <div class="auth-info-banner">
+    <div class="auth-status">
+      <span class="auth-icon">🔐</span>
+      <span class="auth-text">
+        Token validado com sucesso - Scope 'sc_produto' confirmado
+      </span>
+    </div>
+    <div class="user-scopes">
+      <strong>Scopes disponíveis:</strong> 
+      <span *ngFor="let scope of currentUser?.scopes; let last = last" class="scope-tag">
+        {{ scope }}<span *ngIf="!last">, </span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Resultado da Validação -->
+  <div *ngIf="validationResult" class="validation-result" 
+       [class.success]="validationResult.validated"
+       [class.error]="!validationResult.validated">
+    <div class="validation-header">
+      <h4>
+        {{ validationResult.validated ? '✅ Operação Aprovada' : '❌ Operação Rejeitada' }}
+      </h4>
+      <button class="close-button" (click)="clearValidationResult()">×</button>
+    </div>
+    <div class="validation-details">
+      <p><strong>Recurso:</strong> {{ validationResult.resourceId }}</p>
+      <p *ngIf="validationResult.validatedBy">
+        <strong>Aprovado por:</strong> {{ validationResult.validatedBy.name }} ({{ validationResult.validatedBy.role }})
+      </p>
+      <p *ngIf="validationResult.reason">
+        <strong>Motivo:</strong> {{ validationResult.reason }}
+      </p>
+      <p><strong>Data:</strong> {{ validationResult.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando dados dos produtos...</p>
+  </div>
+
+  <!-- Dashboard View -->
+  <div *ngIf="!isLoading && selectedView === 'dashboard'" class="dashboard-content">
+    <!-- Seção de Teste de Alçada -->
+    <div class="alcada-test-section">
+      <h3>🔐 Teste de Validação de Alçada</h3>
+      <p>Use os botões abaixo para testar o sistema de validação de alçada superior:</p>
+      
+      <div class="test-buttons">
+        <button 
+          class="test-button delete-test"
+          (click)="requestProductDeletion(products[0])"
+          [disabled]="!products.length">
+          🗑️ Testar Exclusão de Produto
+        </button>
+        
+        <button 
+          class="test-button update-test"
+          (click)="requestPriceUpdate(products[0])"
+          [disabled]="!products.length">
+          💰 Testar Alteração de Preço
+        </button>
+      </div>
+      
+      <div class="test-info">
+        <p><small>
+          ℹ️ Estes botões simulam operações que requerem validação de alçada superior.
+          O MFE Alçada será carregado dinamicamente para validar a operação.
+        </small></p>
+      </div>
+    </div>
+
+    <!-- Métricas -->
+    <div class="metrics-grid" *ngIf="metrics">
+      <div class="metric-card">
+        <div class="metric-icon">📦</div>
+        <div class="metric-content">
+          <h3>{{ metrics.totalProducts }}</h3>
+          <p>Total de Produtos</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">✅</div>
+        <div class="metric-content">
+          <h3>{{ metrics.activeProducts }}</h3>
+          <p>Produtos Ativos</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">⚠️</div>
+        <div class="metric-content">
+          <h3>{{ metrics.lowStockProducts }}</h3>
+          <p>Estoque Baixo</p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">💰</div>
+        <div class="metric-content">
+          <h3>{{ formatCurrency(metrics.totalValue) }}</h3>
+          <p>Valor Total</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorias -->
+    <div class="categories-section" *ngIf="metrics">
+      <h3>Produtos por Categoria</h3>
+      <div class="categories-grid">
+        <div *ngFor="let category of metrics.categories" class="category-card">
+          <h4>{{ category.name }}</h4>
+          <div class="category-stats">
+            <span class="count">{{ category.count }} produtos</span>
+            <span class="value">{{ formatCurrency(category.value) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produtos com Estoque Baixo -->
+    <div class="low-stock-section" *ngIf="products.length > 0">
+      <h3>Produtos com Estoque Baixo</h3>
+      <div class="low-stock-list">
+        <div *ngFor="let product of getLowStockProducts()" class="low-stock-item">
+          <div class="product-info">
+            <h4>{{ product.name }}</h4>
+            <p>{{ product.category }}</p>
+          </div>
+          <div class="stock-info">
+            <span class="stock-count" [class.critical]="product.stock === 0">
+              {{ product.stock }} unidades
+            </span>
+            <span class="stock-value">{{ formatCurrency(product.price) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products View -->
+  <div *ngIf="!isLoading && selectedView === 'products'" class="products-content">
+    <div class="products-header">
+      <h3>Lista de Produtos</h3>
+      <button 
+        *ngIf="hasPermission('write')"
+        class="action-button primary"
+        (click)="onProductAction('create')">
+        ➕ Novo Produto
+      </button>
+    </div>
+
+    <div class="products-grid">
+      <div *ngFor="let product of products" class="product-card">
+        <div class="product-header">
+          <h4>{{ product.name }}</h4>
+          <span 
+            class="status-badge"
+            [style.background-color]="getStatusColor(product.status)">
+            {{ getStatusLabel(product.status) }}
+          </span>
+        </div>
+        
+        <div class="product-details">
+          <p class="description">{{ product.description }}</p>
+          <div class="product-meta">
+            <span class="category">{{ product.category }}</span>
+            <span class="price">{{ formatCurrency(product.price) }}</span>
+          </div>
+          <div class="product-stock">
+            <span class="stock-label">Estoque:</span>
+            <span 
+              class="stock-value"
+              [class.low]="product.stock < 10"
+              [class.empty]="product.stock === 0">
+              {{ product.stock }} unidades
+            </span>
+          </div>
+          <div class="product-dates">
+            <small>Criado: {{ formatDate(product.createdAt) }}</small>
+            <small>Atualizado: {{ formatDate(product.updatedAt) }}</small>
+          </div>
+        </div>
+
+        <div class="product-actions" *ngIf="hasPermission('read')">
+          <button 
+            class="action-button small"
+            (click)="onProductAction('view', product)">
+            👁️ Ver
+          </button>
+          <button 
+            *ngIf="hasPermission('write')"
+            class="action-button small"
+            (click)="onProductAction('edit', product)">
+            ✏️ Editar
+          </button>
+          <button 
+            *ngIf="hasPermission('delete')"
+            class="action-button small danger"
+            (click)="requestProductDeletion(product)">
+            🗑️ Excluir (com Alçada)
+          </button>
+          <button 
+            *ngIf="hasPermission('write')"
+            class="action-button small warning"
+            (click)="requestPriceUpdate(product)">
+            💰 Alterar Preço (com Alçada)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug Info (apenas em desenvolvimento) -->
+  <div class="debug-section">
+    <details>
+      <summary>🔍 Debug - Informações de Autenticação do Dashboard</summary>
+      <pre>{{ getAuthInfo() | json }}</pre>
+    </details>
+  </div>
+</div>

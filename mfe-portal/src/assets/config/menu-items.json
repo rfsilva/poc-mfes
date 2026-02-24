@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-15T10:30:00Z",
+  "menuItems": [
+    {
+      "id": "produto",
+      "label": "Produtos",
+      "icon": "📦",
+      "description": "Gestão de produtos",
+      "mfeName": "mfe-produto",
+      "route": "/produto",
+      "order": 1,
+      "permissions": ["read"],
+      "scopes": ["sc_produto"],
+      "active": true,
+      "category": "business",
+      "params": {
+        "defaultView": "dashboard",
+        "theme": "default"
+      }
+    },
+    {
+      "id": "dashboard",
+      "label": "Dashboard",
+      "icon": "📊",
+      "description": "Painel de controle",
+      "mfeName": null,
+      "route": "/dashboard",
+      "order": 0,
+      "permissions": ["read"],
+      "scopes": [],
+      "active": true,
+      "category": "analytics",
+      "action": "fake"
+    },
+    {
+      "id": "relatorios",
+      "label": "Relatórios",
+      "icon": "📈",
+      "description": "Gere e visualize relatórios",
+      "mfeName": null,
+      "route": "/relatorios",
+      "order": 2,
+      "permissions": ["read"],
+      "scopes": [],
+      "active": true,
+      "category": "business",
+      "action": "fake"
+    },
+    {
+      "id": "configuracoes",
+      "label": "Configurações",
+      "icon": "⚙️",
+      "description": "Configure o sistema",
+      "mfeName": null,
+      "route": "/configuracoes",
+      "order": 3,
+      "permissions": ["write", "admin"],
+      "scopes": [],
+      "active": true,
+      "category": "system",
+      "action": "fake"
+    },
+    {
+      "id": "usuarios",
+      "label": "Usuários",
+      "icon": "👥",
+      "description": "Gerencie usuários do sistema",
+      "mfeName": null,
+      "route": "/usuarios",
+      "order": 4,
+      "permissions": ["admin"],
+      "scopes": ["sc_usuario"],
+      "active": true,
+      "category": "system",
+      "action": "fake"
+    }
+  ]
+}

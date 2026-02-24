@@ -1,0 +1,442 @@
+<div class="validation-modal" *ngIf="validation" style="
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  max-width: 600px;
+  width: 90%;
+  z-index: 10000;
+  border: 1px solid #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-height: 90vh;
+  overflow-y: auto;
+">
+  <!-- Header -->
+  <div class="validation-header" style="
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+  ">
+    <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 600;">
+      🔐 {{ getValidationTitle() }}
+    </h3>
+    <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">
+      {{ getValidationDescription() }}
+    </p>
+  </div>
+  
+  <!-- Content -->
+  <div style="padding: 1.5rem;">
+    <!-- Contexto dinâmico baseado no tipo de recurso -->
+    <div class="operation-context">
+      <div class="context-section" style="margin-bottom: 1.5rem;">
+        <h4 style="
+          margin: 0 0 1rem 0; 
+          color: #374151; 
+          font-size: 1rem; 
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        ">📋 Detalhes da Operação</h4>
+        <div class="context-grid" style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1rem;
+          background: #f8fafc;
+          padding: 1rem;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+        ">
+          <div class="context-item" style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <strong style="color: #6b7280; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Tipo:</strong> 
+            <span class="operation-badge" [class]="getOperationClass()" style="
+              display: inline-flex;
+              align-items: center;
+              padding: 0.25rem 0.75rem;
+              background: #fef2f2;
+              color: #dc2626;
+              border-radius: 9999px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              width: fit-content;
+            ">
+              {{ getOperationLabel() }}
+            </span>
+          </div>
+          <div class="context-item" style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <strong style="color: #6b7280; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Recurso:</strong> 
+            <span style="color: #374151; font-weight: 500;">{{ validation.context.resourceName }}</span>
+          </div>
+          <div class="context-item" style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <strong style="color: #6b7280; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Solicitante:</strong> 
+            <span style="color: #374151; font-weight: 500;">{{ validation.context.requestedBy.name }}</span>
+          </div>
+          <div class="context-item" style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <strong style="color: #6b7280; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Urgência:</strong>
+            <span class="urgency-badge" [class]="'urgency-' + validation.metadata.urgency" style="
+              display: inline-flex;
+              align-items: center;
+              padding: 0.25rem 0.75rem;
+              background: #fef3c7;
+              color: #d97706;
+              border-radius: 9999px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              width: fit-content;
+              text-transform: capitalize;
+            ">
+              {{ validation.metadata.urgency | titlecase }}
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Detalhes específicos do recurso (dinâmico) -->
+      <div class="resource-details" *ngIf="validation.context.resourceDetails" style="margin-bottom: 1.5rem;">
+        <h4 style="
+          margin: 0 0 1rem 0; 
+          color: #374151; 
+          font-size: 1rem; 
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        ">📄 Detalhes do {{ getResourceTypeLabel() }}</h4>
+        <div class="details-grid" style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 0.75rem;
+          background: #fefefe;
+          padding: 1rem;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+        ">
+          <div 
+            *ngFor="let detail of getResourceDetailsArray()" 
+            class="detail-item" style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 0.5rem 0;
+              border-bottom: 1px solid #f3f4f6;
+            ">
+            <strong style="color: #6b7280; font-size: 0.875rem;">{{ detail.label }}:</strong> 
+            <span [innerHTML]="detail.value" style="color: #374151; font-weight: 500; text-align: right;"></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Impacto e reversibilidade -->
+      <div class="impact-section" *ngIf="validation.context.impact" style="margin-bottom: 1.5rem;">
+        <h4 style="
+          margin: 0 0 1rem 0; 
+          color: #374151; 
+          font-size: 1rem; 
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        ">⚠️ Análise de Impacto</h4>
+        <div class="impact-info" style="
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          background: #fef3c7;
+          padding: 1rem;
+          border-radius: 8px;
+          border: 1px solid #f59e0b;
+        ">
+          <span class="impact-level" [class]="'impact-' + validation.context.impact" style="
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            background: #fed7aa;
+            color: #ea580c;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+          ">
+            Impacto: {{ validation.context.impact | titlecase }}
+          </span>
+          <span class="reversibility" [class.reversible]="validation.context.reversible" style="
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+          " [style.background]="validation.context.reversible ? '#dcfce7' : '#fecaca'"
+             [style.color]="validation.context.reversible ? '#16a34a' : '#dc2626'">
+            {{ validation.context.reversible ? '🔄 Reversível' : '⚠️ Irreversível' }}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Formulário de validação -->
+    <form [formGroup]="validationForm" (ngSubmit)="onValidate()" style="
+      display: grid;
+      gap: 1rem;
+    ">
+      <!-- Campo Usuário -->
+      <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <label style="
+          font-weight: 600; 
+          color: #374151; 
+          font-size: 0.875rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        ">👤 Usuário com Alçada ({{ validation.requiredLevel }}):</label>
+        <input 
+          formControlName="username" 
+          type="text" 
+          [placeholder]="'Usuário com nível ' + validation.requiredLevel"
+          required
+          class="form-input"
+          [style.border-color]="hasFieldError('username') ? '#ef4444' : '#e2e8f0'"
+          style="
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+          ">
+        <!-- Mensagem de erro -->
+        <div *ngIf="hasFieldError('username')" style="
+          color: #ef4444;
+          font-size: 0.75rem;
+          margin-top: 0.25rem;
+        ">
+          {{ getFieldError('username') }}
+        </div>
+      </div>
+      
+      <!-- Campo Senha -->
+      <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <label style="
+          font-weight: 600; 
+          color: #374151; 
+          font-size: 0.875rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        ">🔑 Senha:</label>
+        <input 
+          formControlName="password" 
+          type="password" 
+          required
+          class="form-input"
+          [style.border-color]="hasFieldError('password') ? '#ef4444' : '#e2e8f0'"
+          style="
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+          ">
+        <!-- Mensagem de erro -->
+        <div *ngIf="hasFieldError('password')" style="
+          color: #ef4444;
+          font-size: 0.75rem;
+          margin-top: 0.25rem;
+        ">
+          {{ getFieldError('password') }}
+        </div>
+      </div>
+      
+      <!-- Campo Justificativa -->
+      <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <label style="
+          font-weight: 600; 
+          color: #374151; 
+          font-size: 0.875rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        ">📝 Justificativa:</label>
+        <textarea 
+          formControlName="justification" 
+          [placeholder]="getJustificationPlaceholder()"
+          required
+          rows="3"
+          class="form-input"
+          [style.border-color]="hasFieldError('justification') ? '#ef4444' : '#e2e8f0'"
+          style="
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+          ">
+        </textarea>
+        <!-- Mensagem de erro -->
+        <div *ngIf="hasFieldError('justification')" style="
+          color: #ef4444;
+          font-size: 0.75rem;
+          margin-top: 0.25rem;
+        ">
+          {{ getFieldError('justification') }}
+        </div>
+        <!-- Contador de caracteres -->
+        <div style="
+          font-size: 0.75rem;
+          color: #6b7280;
+          text-align: right;
+        ">
+          {{ validationForm.get('justification')?.value?.length || 0 }} / 10 caracteres mínimos
+        </div>
+      </div>
+      
+      <!-- Debug Info (removível em produção) -->
+      <div style="
+        background: #f3f4f6;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin: 0.5rem 0;
+      ">
+        <strong>Debug:</strong> 
+        Formulário {{ isFormValid() ? 'VÁLIDO' : 'INVÁLIDO' }} | 
+        Validando: {{ isValidating ? 'SIM' : 'NÃO' }} |
+        Campos preenchidos: {{ validationForm.get('username')?.value ? '✓' : '✗' }} {{ validationForm.get('password')?.value ? '✓' : '✗' }} {{ (validationForm.get('justification')?.value?.length || 0) >= 10 ? '✓' : '✗' }}
+      </div>
+      
+      <!-- Botões de Ação -->
+      <div class="form-actions" style="
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+      ">
+        <button 
+          type="button" 
+          class="btn-cancel" 
+          (click)="onCancel()"
+          style="
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+          ">
+          ❌ Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn-validate"
+          [disabled]="!isFormValid()"
+          [ngStyle]="getSubmitButtonStyle()"
+          [class]="getSubmitButtonClass()">
+          {{ isValidating ? '⏳ Validando...' : '✅ Aprovar Operação' }}
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Timer de expiração -->
+  <div class="expiration-timer" *ngIf="timeRemaining > 0" style="
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+  ">
+    ⏱️ Esta validação expira em: <span style="font-weight: 600; color: #374151;">{{ formatTimeRemaining() }}</span>
+  </div>
+</div>
+
+<!-- Fallback quando não há dados de validação -->
+<div class="validation-modal" *ngIf="!validation" style="
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  max-width: 400px;
+  width: 90%;
+  z-index: 10000;
+  border: 1px solid #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  text-align: center;
+">
+  <div class="validation-header">
+    <h3 style="margin: 0 0 8px 0; font-size: 1.25rem; font-weight: 600; color: #374151;">
+      🔐 Aguardando Dados de Validação
+    </h3>
+    <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">
+      Carregando informações da operação...
+    </p>
+  </div>
+  
+  <!-- Loading spinner -->
+  <div style="
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  ">
+    <div class="spinner" style="
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e5e7eb;
+      border-top: 3px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    "></div>
+  </div>
+</div>
+
+<!-- CSS Styles -->
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #4b5563 !important;
+  }
+  
+  .btn-validate-enabled:hover {
+    background-color: #059669 !important;
+  }
+  
+  .btn-validate-disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+  }
+</style>
