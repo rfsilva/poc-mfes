@@ -1,0 +1,93 @@
+<div class="login-form-container">
+  <div class="login-content">
+    <div class="login-header">
+      <h2>Acesso ao Sistema</h2>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-row">
+        <!-- Campo Username -->
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            class="form-control"
+            [class.error]="username?.invalid && username?.touched"
+            placeholder="Digite seu usuário"
+            autocomplete="username">
+          
+          <div class="error-messages" *ngIf="username?.invalid && username?.touched">
+            <small *ngIf="hasError('username', 'required')" class="error-text">
+              Usuário é obrigatório
+            </small>
+            <small *ngIf="hasError('username', 'minlength')" class="error-text">
+              Usuário deve ter pelo menos 3 caracteres
+            </small>
+          </div>
+        </div>
+
+        <!-- Campo Password -->
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <div class="password-input-container">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              class="form-control"
+              [class.error]="password?.invalid && password?.touched"
+              placeholder="Digite sua senha"
+              autocomplete="current-password">
+            
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+              {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+            </button>
+          </div>
+          
+          <div class="error-messages" *ngIf="password?.invalid && password?.touched">
+            <small *ngIf="hasError('password', 'required')" class="error-text">
+              Senha é obrigatória
+            </small>
+            <small *ngIf="hasError('password', 'minlength')" class="error-text">
+              Senha deve ter pelo menos 6 caracteres
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <!-- Remember Me -->
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="rememberMe">
+            Lembrar-me
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="submit-button"
+          [disabled]="isLoading || loginForm.invalid"
+          [class.loading]="isLoading">
+          <span *ngIf="!isLoading">Entrar</span>
+          <span *ngIf="isLoading" class="loading-content">
+            <span class="spinner"></span>
+            Entrando...
+          </span>
+        </button>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+</div>

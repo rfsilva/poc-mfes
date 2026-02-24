@@ -1,0 +1,329 @@
+/* Reset e configurações globais */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  color: #1e293b;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  
+  &:hover {
+    background: #94a3b8;
+  }
+}
+
+/* Garantir que o componente não cause overflow */
+app-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Estilos específicos para modal de validação */
+.validation-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+  
+  .validation-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+  }
+  
+  .operation-context {
+    margin-bottom: 2rem;
+    
+    .context-section {
+      margin-bottom: 1.5rem;
+      
+      h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .context-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        
+        .context-item {
+          padding: 0.75rem;
+          background: #f8fafc;
+          border-radius: 8px;
+          border-left: 3px solid #3b82f6;
+          
+          strong {
+            display: block;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+          }
+          
+          span {
+            font-size: 0.95rem;
+            color: #1e293b;
+          }
+        }
+      }
+    }
+    
+    .resource-details {
+      margin-bottom: 1.5rem;
+      
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 0.5rem;
+        
+        .detail-item {
+          padding: 0.5rem 0.75rem;
+          background: #fefefe;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          
+          strong {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-right: 0.5rem;
+          }
+          
+          span {
+            font-size: 0.9rem;
+            color: #1e293b;
+          }
+        }
+      }
+    }
+    
+    .impact-section {
+      .impact-info {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        
+        .impact-level {
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          
+          &.impact-low {
+            background: #dcfce7;
+            color: #166534;
+          }
+          
+          &.impact-medium {
+            background: #fef3c7;
+            color: #92400e;
+          }
+          
+          &.impact-high {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+        }
+        
+        .reversibility {
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          
+          &.reversible {
+            background: #dcfce7;
+            color: #166534;
+          }
+          
+          &:not(.reversible) {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+        }
+      }
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
+    
+    label {
+      display: block;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+    
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    
+    button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      
+      &.btn-cancel {
+        background: #f3f4f6;
+        color: #374151;
+        
+        &:hover {
+          background: #e5e7eb;
+        }
+      }
+      
+      &.btn-validate {
+        background: #3b82f6;
+        color: white;
+        
+        &:hover:not(:disabled) {
+          background: #2563eb;
+        }
+        
+        &:disabled {
+          background: #9ca3af;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+  
+  .expiration-timer {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+/* Badges */
+.operation-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  
+  &.operation-delete {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  &.operation-update {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.operation-approve {
+    background: #dcfce7;
+    color: #166534;
+  }
+  
+  &.operation-transfer {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+}
+
+.urgency-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  
+  &.urgency-low {
+    background: #f0f9ff;
+    color: #0369a1;
+  }
+  
+  &.urgency-medium {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.urgency-high {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  &.urgency-critical {
+    background: #fdf2f8;
+    color: #be185d;
+  }
+}

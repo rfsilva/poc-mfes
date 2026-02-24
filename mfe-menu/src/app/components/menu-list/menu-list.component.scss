@@ -1,0 +1,254 @@
+.menu-container {
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  
+  h3 {
+    margin: 0 0 0.75rem 0;
+    color: #1e293b;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    
+    .user-name {
+      font-size: 0.875rem;
+      color: #374151;
+      font-weight: 500;
+    }
+    
+    .user-role {
+      font-size: 0.75rem;
+      color: #3b82f6;
+      font-weight: 500;
+      padding: 0.25rem 0.5rem;
+      background: #eff6ff;
+      border-radius: 4px;
+      width: fit-content;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem;
+  
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #f1f5f9;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.menu-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  
+  .menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    .menu-item {
+      margin-bottom: 0.5rem;
+      
+      &.active .menu-button {
+        background: #3b82f6;
+        color: white;
+      }
+      
+      &.disabled .menu-button {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
+      .menu-button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-align: left;
+        
+        &:hover:not(:disabled) {
+          background: #f8fafc;
+        }
+        
+        .menu-icon {
+          font-size: 1.25rem;
+          margin-right: 0.75rem;
+          min-width: 2rem;
+          text-align: center;
+        }
+        
+        .menu-content {
+          flex: 1;
+          
+          .menu-label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.125rem;
+            font-size: 0.875rem;
+          }
+          
+          .menu-description {
+            display: block;
+            font-size: 0.75rem;
+            color: #64748b;
+            line-height: 1.3;
+          }
+        }
+      }
+    }
+  }
+}
+
+.empty-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+  
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+  
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: #374151;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-width: 200px;
+  }
+}
+
+.debug-info {
+  margin-top: auto;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+  
+  details {
+    summary {
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      padding: 0.25rem;
+      border-radius: 4px;
+      
+      &:hover {
+        background: #eff6ff;
+      }
+    }
+    
+    .debug-content {
+      font-size: 0.75rem;
+      
+      h5 {
+        margin: 0.75rem 0 0.25rem 0;
+        color: #374151;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      
+      p {
+        margin: 0.25rem 0;
+        color: #64748b;
+      }
+      
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+        
+        .tag {
+          padding: 0.125rem 0.375rem;
+          border-radius: 3px;
+          font-size: 0.625rem;
+          font-weight: 500;
+          
+          &.permission-tag {
+            background: #eff6ff;
+            color: #3b82f6;
+            border: 1px solid #dbeafe;
+          }
+          
+          &.scope-tag {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+          }
+        }
+      }
+      
+      .menu-debug-item {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #e5e7eb;
+        
+        strong {
+          color: #374151;
+        }
+        
+        small {
+          color: #6b7280;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

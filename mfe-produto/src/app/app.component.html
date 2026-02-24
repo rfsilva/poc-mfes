@@ -1,0 +1,60 @@
+<div class="mfe-produto-container" [ngClass]="getAuthStatusClass()">
+  <!-- Cabeçalho de autenticação -->
+  <div class="auth-header">
+    <h2>🔐 MFE Produto - Gerenciamento de Token</h2>
+    
+    <div *ngIf="isAuthorized" class="auth-success-banner">
+      ✅ Acesso autorizado para: {{ currentUser?.name }} ({{ currentUser?.username }})
+      <br>
+      <small>Scopes: {{ currentUser?.scopes?.join(', ') }}</small>
+      
+      <!-- Informações de refresh do token -->
+      <div class="token-refresh-info" *ngIf="tokenUpdateCount > 0">
+        <span class="refresh-icon">🔄</span>
+        <span class="refresh-text">{{ getTokenUpdateInfo() }}</span>
+        <small *ngIf="lastTokenUpdate"> - Última: {{ getLastUpdateTime() }}</small>
+      </div>
+    </div>
+    
+    <div *ngIf="authError" class="auth-error-banner">
+      ❌ {{ authError }}
+    </div>
+    
+    <div *ngIf="!isAuthorized && !authError" class="auth-pending-banner">
+      ⏳ Aguardando validação de token...
+    </div>
+  </div>
+
+  <!-- Conteúdo principal (só exibe se autorizado) -->
+  <div *ngIf="isAuthorized" class="main-content">
+    <app-product-dashboard></app-product-dashboard>
+  </div>
+
+  <!-- Informações de debug (apenas em desenvolvimento) -->
+  <div *ngIf="debugInfo" class="debug-info">
+    <details>
+      <summary>🔍 Debug - Gerenciamento de Token no MFE-Produto</summary>
+      <div class="debug-content">
+        <h4>Status de Autenticação:</h4>
+        <p><strong>Autorizado:</strong> {{ debugInfo.isAuthenticated ? 'Sim' : 'Não' }}</p>
+        <p><strong>Token Válido:</strong> {{ debugInfo.tokenValid ? 'Sim' : 'Não' }}</p>
+        <p><strong>Scope Necessário:</strong> {{ debugInfo.requiredScope }}</p>
+        <p><strong>Possui Scope:</strong> {{ debugInfo.hasRequiredScope ? 'Sim' : 'Não' }}</p>
+        
+        <h4>Gerenciamento de Token:</h4>
+        <p><strong>Atualizações:</strong> {{ tokenUpdateCount }}</p>
+        <p><strong>Última Atualização:</strong> {{ lastTokenUpdate || 'Nenhuma' }}</p>
+        
+        <h4 *ngIf="debugInfo.expirationInfo">Expiração do Token:</h4>
+        <div *ngIf="debugInfo.expirationInfo">
+          <p><strong>Válido:</strong> {{ debugInfo.expirationInfo.isValid ? 'Sim' : 'Não' }}</p>
+          <p><strong>Expira em:</strong> {{ debugInfo.expirationInfo.expiresInMinutes }} minutos</p>
+          <p><strong>Expira em:</strong> {{ debugInfo.expirationInfo.expiresInHours }} horas</p>
+        </div>
+        
+        <h4>Debug Completo:</h4>
+        <pre>{{ debugInfo | json }}</pre>
+      </div>
+    </details>
+  </div>
+</div>
